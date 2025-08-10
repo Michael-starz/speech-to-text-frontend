@@ -4,16 +4,16 @@ import { toaster } from './ui/toaster';
 
 interface RecordAudioProps {
   onAudioRecorded: (audioBlob: Blob) => void;
-  isLoading?: boolean; // Prop to show loading state from parent (e.g., while backend processes)
+  isLoading?: boolean; 
 }
 
 const MAX_AUDIO_SIZE_MB = 25;
-const MAX_AUDIO_SIZE_BYTES = MAX_AUDIO_SIZE_MB * 1024 * 1024; // 25 MB in bytes
+const MAX_AUDIO_SIZE_BYTES = MAX_AUDIO_SIZE_MB * 1024 * 1024; 
 const SIZE_THRESHOLD_BYTES = MAX_AUDIO_SIZE_BYTES * 0.98; // Stop recording at 98% of max size
 
 const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading }) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [audioSize, setAudioSize] = useState<number>(0); // Current size of recorded audio in bytes
+  const [audioSize, setAudioSize] = useState<number>(0); 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isMicrophoneLoading, setIsMicrophoneLoading] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
     
   // Function to request microphone access and start recording
   const startRecording = async () => {
-    setErrorMessage(null); // Clear previous errors
+    setErrorMessage(null); 
     setAudioSize(0); // Reset audio size for new recording
     audioChunksRef.current = []; // Clear previous chunks
 
@@ -31,9 +31,8 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
     try {
       // Request access to the user's microphone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream; // Store the stream to stop tracks later
+      streamRef.current = stream;
 
-      // Create a new MediaRecorder instance
       const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
       // Event listener for when audio data is available
@@ -42,7 +41,7 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
           audioChunksRef.current.push(event.data);
           setAudioSize((prevSize) => {
             const newSize = prevSize + event.data.size;
-            // Check if the current size is approaching the maximum limit
+            
             if (newSize >= SIZE_THRESHOLD_BYTES && mediaRecorderRef.current?.state === 'recording') {
               toaster.create({
                 title: 'Recording stopped automatically',
@@ -51,7 +50,7 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
                 duration: 3000,
                 closable: true,
               });
-              mediaRecorderRef.current?.stop(); // Automatically stop recording
+              mediaRecorderRef.current?.stop();
             }
             return newSize;
           });
@@ -61,11 +60,9 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
       // Event listener for when recording stops
       mediaRecorder.onstop = () => {
         setIsRecording(false);
-        // Combine all recorded audio chunks into a single Blob
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        onAudioRecorded(audioBlob); // Pass the audio Blob to the parent component
+        onAudioRecorded(audioBlob);
 
-        // Stop all tracks on the media stream to release microphone
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
           streamRef.current = null;
@@ -77,7 +74,6 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
         console.error('MediaRecorder error:', event);
         setErrorMessage(`Recording error: Recording failed due to an unknown error.`);
         setIsRecording(false);
-        // Ensure stream tracks are stopped on error
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
           streamRef.current = null;
@@ -151,7 +147,7 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
     }
   };
 
-  // Cleanup effect: stop recording and release microphone if component unmounts
+  //stop recording and release microphone if component unmounts
   useEffect(() => {
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
@@ -163,7 +159,7 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
     };
   }, []);
 
-  // Helper to format audio size for display
+  //format audio size for display
   const formatAudioSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -182,12 +178,12 @@ const RecordAudio: React.FC<RecordAudioProps> = ({ onAudioRecorded, isLoading })
         px={6}
         borderStyle="dashed"
         borderWidth={2}
-        borderColor={isRecording ? 'red.500' : 'gray.300'} // Red border when recording
+        borderColor={isRecording ? 'red.500' : 'gray.300'}
         _hover={{
           borderColor: isRecording ? 'red.600' : 'gray.500',
           backgroundColor: isRecording ? 'red.50' : 'gray.50',
         }}
-        disabled={isLoading || isMicrophoneLoading} // Disable if parent is loading or microphone is being accessed
+        disabled={isLoading || isMicrophoneLoading}
       >
         {isMicrophoneLoading ? (
           <Spinner size="md" mr={2} />

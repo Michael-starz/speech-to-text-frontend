@@ -102,12 +102,12 @@ const TranscriptionDisplay = ({
     }
     if (currentView === "translation") {
       return "📁 Upload an audio file to get started...\n\n🎵 Supported formats: MP3, WAV, M4A, OGG\n🌐 Your translated text will appear here\n⚡ Fast and accurate AI translation\n🎯 High-quality results in your chosen language";
-    } else { // currentView === "transcription"
+    } else {
       return "📁 Upload an audio file to get started...\n\n🎵 Supported formats: MP3, WAV, M4A, OGG\n🇬🇧 Your English transcription will appear here\n⚡ Fast and accurate AI transcription\n";
     }
   };
 
-  // --- Determine if currently editing ---
+
   const isEditing = currentView === "translation" ? isEditingTranslation : isEditingTranscription;
 
   return (
@@ -154,7 +154,7 @@ const TranscriptionDisplay = ({
                   variant="ghost"
                   size="sm"
                   aria-label="Select view"
-                  disabled={isTranscribing || isTranslating} // Disable while processing
+                  disabled={isTranscribing || isTranslating}
                 >
                   View<FaChevronDown />
                 </Button>
