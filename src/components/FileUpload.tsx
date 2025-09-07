@@ -174,12 +174,13 @@ const FileUpload = ({
     });
 
     const formData = new FormData();
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     formData.append("file", selectedFile);
     formData.append("target_language", selectedLanguage[0]);
 
     try {
       const response = await fetch(
-        "http://localhost:8000/v1/transcribe-and-translate",
+        `${apiBaseUrl}/v1/transcribe-and-translate`,
         {
           method: "POST",
           body: formData,
