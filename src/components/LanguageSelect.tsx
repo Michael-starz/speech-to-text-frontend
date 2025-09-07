@@ -93,11 +93,18 @@ const languages: Language[] = [
 { label: "Filipino", value: "Filipino" }
 ];
 
+type ResponsiveWidth = string | {
+  base: string | number;
+  md: string | number;
+  [key: string]: string | number;
+};
+
 interface LanguageSelectProps {
   value?: string[];
   onValueChange: (details: { value: string[] }) => void;
   placeholder?: string;
   label?: string;
+  w: ResponsiveWidth
 }
 
 const SelectWithAutoClose = ({ 
@@ -158,6 +165,7 @@ const LanguageSelect = ({
   value,
   onValueChange,
   placeholder = "Select a language...",
+  w,
 }: LanguageSelectProps) => {
   const languageCollection = createListCollection({
     items: languages,
@@ -176,6 +184,7 @@ const LanguageSelect = ({
             borderColor: "gray.500",
             backgroundColor: "gray.50"
           }}
+          w={w}
         >
           Select Language
         </Button>
