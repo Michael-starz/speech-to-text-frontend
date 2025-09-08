@@ -15,6 +15,7 @@ import LanguageSelect from "./LanguageSelect";
 import RecordAudio from "./RecordAudio";
 import { toaster } from "./ui/toaster";
 import { BsSend } from "react-icons/bs";
+import { API_BASE_URL } from "@/config";
 
 interface FileUploadProps {
   selectedLanguage: string[];
@@ -174,13 +175,12 @@ const FileUpload = ({
     });
 
     const formData = new FormData();
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     formData.append("file", selectedFile);
     formData.append("target_language", selectedLanguage[0]);
 
     try {
       const response = await fetch(
-        `${apiBaseUrl}/v1/transcribe-and-translate`,
+        `${API_BASE_URL}/v1/transcribe-and-translate`,
         {
           method: "POST",
           body: formData,
