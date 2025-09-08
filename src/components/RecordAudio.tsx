@@ -46,10 +46,17 @@ const RecordAudio: React.FC<RecordAudioProps> = ({
       // Request access to the user's microphone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
+      let options: MediaRecorderOptions = {}
 
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm",
-      });
+      if (MediaRecorder.isTypeSupported("audio/webm")) {
+      options.mimeType = "audio/webm";
+    } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+      options.mimeType = "audio/mp4";  // Safari iOS fallback
+    } else if (MediaRecorder.isTypeSupported("audio/aac")) {
+      options.mimeType = "audio/aac";  // another fallback
+    }
+
+      const mediaRecorder = new MediaRecorder(stream, options);
 
       // Event listener for when audio data is available
       mediaRecorder.ondataavailable = (event: BlobEvent) => {
